@@ -9,10 +9,10 @@ interface Props {
   children: React.ReactNode | React.ReactNode[] 
 };
 
-const Websocket = ({ on, url, retry, protocol, children }: Props) => {
+const Websocket = ({ children, on, ...rest }: Props) => {
   let client: any;
   React.useEffect(() => {
-    client = client || ws(url, on, protocol);
+    client = client || ws({ fn: on, ...rest });
 
     return () => {
       if (client) { client.close(); }

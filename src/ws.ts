@@ -6,14 +6,21 @@ const STATES = Object.freeze({
   CLOSED: 3,
 });
 
-const EVENTS = Object.freeze({
+export const EVENT = Object.freeze({
   OPEN: 'open',
   CLOSED: 'closed',
   MESSAGE: 'message',
   ERROR: 'error',
 });
 
-export default (url: string, fn: Function, protocol?: string) => {
+interface Params { 
+  fn: Function, 
+  url: string, 
+  retry: boolean, 
+  protocol?: string,
+};
+
+const ws = ({ url, fn, retry, protocol }: Params) => {
   const emit = fn || function() {};
   const client = new WebSocket(url, protocol);
 
@@ -33,16 +40,23 @@ export default (url: string, fn: Function, protocol?: string) => {
     }
   }
 
-  client.onerror = (error) => emit({ event: EVENTS.ERROR, error });
+  client.onerror = (error) => {
+    emit({ event: EVENT.ERROR, error });
+    if (retry !== false && client.readyState !== STATES.OPEN) {
+      ws({ url, fn, retry, protocol });
+    }
+  }
   client.onopen = () => {
     heartbeat();
     emit({ 
-      event: EVENTS.OPEN, 
+      event: EVENT.OPEN, 
       send: send() 
     });
   }
 
-  client.onclose = () => emit({ event: EVENTS.CLOSED });
-  client.onmessage = ({ data }) => emit({ event: EVENTS.MESSAGE, data, send: send() });
+  client.onclose = () => emit({ event: EVENT.CLOSED });
+  client.onmessage = ({ data }) => emit({ event: EVENT.MESSAGE, data, send: send() });
   return client;
 };
+
+export default ws;
