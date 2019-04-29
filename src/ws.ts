@@ -20,7 +20,7 @@ interface Params {
   protocol?: string,
 };
 
-const ws = ({ url, fn, retry, protocol }: Params) => {
+const ws = ({ url, fn, retry, protocol }: Params, connect: Function) => {
   const emit = fn || function() {};
   const client = new WebSocket(url, protocol);
 
@@ -43,7 +43,7 @@ const ws = ({ url, fn, retry, protocol }: Params) => {
   client.onerror = (error) => {
     emit({ event: EVENT.ERROR, error });
     if (retry !== false && client.readyState !== STATES.OPEN) {
-      ws({ url, fn, retry, protocol });
+      ws({ url, fn, retry, protocol }, connect);
     }
   }
   client.onopen = () => {
@@ -52,11 +52,11 @@ const ws = ({ url, fn, retry, protocol }: Params) => {
       event: EVENT.OPEN, 
       send: send() 
     });
+    connect(client);
   }
 
-  client.onclose = () => emit({ event: EVENT.CLOSED });
+  client.onclose = ({ code, reason }) => emit({ event: EVENT.CLOSED });
   client.onmessage = ({ data }) => emit({ event: EVENT.MESSAGE, data, send: send() });
-  return client;
 };
 
 export default ws;
