@@ -1,4 +1,4 @@
 node_modules
 npm-debug.log
-lib
+lib/*
 yarn-error.log

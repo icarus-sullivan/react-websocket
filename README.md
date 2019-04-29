@@ -78,6 +78,8 @@ All incoming events will contain an `event` property. Further event properties a
 
     ```
     {
-        event: 'closed'
+        event: 'closed',
+        code: number,
+        reason: string,
     }
     ```
