@@ -1,7 +1,7 @@
 ![npm downloads total](https://img.shields.io/npm/dt/@lawcket/react-websocket.svg) ![npm version](https://img.shields.io/npm/v/@lawcket/react-websocket.svg) ![npm license](https://img.shields.io/npm/l/@lawcket/react-websocket.svg)
 
 # @lawcket/react-websocket
-A slim React Websocket implementation for React 16.8+
+A slim Websocket implementation for React 16+. The libray uses the standard browser WebSocket so 'should' be supported in React-Native, it also uses *React.Fragment* and does not create a new div element.
 
 ### Installation
 ```
@@ -46,40 +46,31 @@ const Messages = () => {
 ### Events
 All incoming events will contain an `event` property. Further event properties are dependent on the event associated.
 
-- OPEN 
+**open**
+|Name|Type|Description |
+|-----|-----|-----|
+| event | 'open' | The websocket is connected and is ready for communication |
+| send | function(any) | A function to send data to the server | 
 
-    ```
-    {
-        event: 'open',
-        send: fn(send_to_server), 
-    }
-    ```
+**message**
+|Name|Type|Description |
+|-----|-----|-----|
+| event | 'message' | The websocket has received a message |
+| data | any | Incoming message (usually stringified JSON data) |
+| send | function(any) | A function to send data to the server | 
     
-- MESSAGE
+**error**
+|Name|Type|Description |
+|-----|-----|-----|
+| event | 'error' | An error has occured |
+| error | Error | The error that occured during connection or usage |
 
-    ```
-    {
-        event: 'message',
-        send: fn(send_to_server), 
-        data: any, // usually stringified JSON data
-    }
-    ```
+ **close**
+ Reference: [Close codes & reasons](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+|Name|Type|Description |
+|-----|-----|-----|
+| event | 'close' | The websocket connection has closed |
+| code | number | The close code sent by the server |
+| reason | string | The reason the connection was closed |
 
-- ERROR
-
-    ```
-    {
-        event: 'error',
-        error: Error
-    }
-    ```
-    
-- CLOSE
-
-    ```
-    {
-        event: 'closed',
-        code: number,
-        reason: string,
-    }
-    ```
+   
