@@ -40,7 +40,7 @@ const Messages = () => {
 |-----|-----|-----|---|
 | url | string | The websocket url to connect to | |
 | protocol | string | The protocol for the websocket to use | |
-| retry | boolean | If an error occurs, should it try to reconnect | false | 
+| retry | boolean | If an error occurs, should it reconnect | true | 
 | on | function | A listener for events from the websocket | |
 
 ### Events
