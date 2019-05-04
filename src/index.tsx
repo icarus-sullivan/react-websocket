@@ -2,19 +2,15 @@ import * as React from 'react';
 
 const OPEN_STATE = 1;
 
-export const EVENT = Object.freeze({
-  OPEN: 'open',
-  CLOSED: 'close',
-  MESSAGE: 'message',
-  ERROR: 'error',
-});
-
 interface Props { 
-  on: Function,
+  onError: Function,
+  onOpen: Function,
+  onClose: Function,
+  onMessage: Function,
   url: string,
   retry: boolean,
   protocol?: string,
-  children: React.ReactNode | React.ReactNode[]
+  children: Function,
 };
 
 export default class Websocket extends React.PureComponent<Props, {}> {
@@ -45,17 +41,14 @@ export default class Websocket extends React.PureComponent<Props, {}> {
       this.client.onerror = this.error;
     } catch (e) {
       // some websockets will throw an error with SECURITY_ERROR
-      this.emit({ event: EVENT.ERROR, error: e });
+      this.error(e);
     }
   }
 
   clear = () => {
     clearInterval(this.heartbeat);
     if (this.client) this.client.close();
-  }
-
-  emit = (args: any) => {
-    if (this.props.on) this.props.on(args);
+    this.client = undefined;
   }
 
   send = (msg: any) => {
@@ -70,34 +63,36 @@ export default class Websocket extends React.PureComponent<Props, {}> {
 
   open = () => {
     this.heartbeat = setInterval(this.keepalive, 1000);
-    this.emit({
+    this.props.onOpen({
       send: this.send,
-      event: EVENT.OPEN,
     });
   }
 
   closed = ({ code, reason }: any) => {
-    this.emit({ event: EVENT.CLOSED, code, reason });
+    this.props.onClose({ code, reason });
     this.clear();
   }
 
-  message = ({ data }: any) => this.emit({
-    send: this.send,
-    event: EVENT.MESSAGE,
-    data,
-  });
+  message = ({ data }: any) => {
+    this.props.onMessage({
+      send: this.send,
+      data,
+    })
+  }
 
   error = (error: any) => {
-    this.emit({ event: EVENT.ERROR, error });
-    this.clear();
-
+    this.props.onError(error);
     if (this.props.retry !== false) {
       this.start();
     }
   }
 
   render() {
-    return (<React.Fragment>{this.props.children}</React.Fragment>);
+    const { children } = this.props;
+    if (!children || typeof children !== 'function') {
+      throw new Error(`Websocket Component requires the immediate child to be a function`);
+    }
+    return children({ send: this.send, close: this.clear });
   }
 
 };
