@@ -65,9 +65,10 @@ const Messages = () => {
 |-----|-----|-----|
 | error | Error | The error that occured during connection or usage |
 
- ### onClose
 
- Reference: [Close codes & reasons](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+### onClose
+
+Reference: [Close codes & reasons](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
 
 |Parameter|Type|Description |
 |-----|-----|-----|
