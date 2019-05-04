@@ -16,7 +16,7 @@ yarn add @lawcket/react-websocket
 Example:
 ```
 import React, { useState } from 'react';
-import Websocket, { EVENT } from '@lawcket/react-websocket';
+import Websocket from '@lawcket/react-websocket';
 
 const Messages = () => {
   const [messages, addMessage] = useState([]);
@@ -66,7 +66,9 @@ const Messages = () => {
 | error | Error | The error that occured during connection or usage |
 
  ### onClose
+
  Reference: [Close codes & reasons](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent)
+
 |Parameter|Type|Description |
 |-----|-----|-----|
 | code | number | The close code sent by the server |

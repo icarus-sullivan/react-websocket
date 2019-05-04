@@ -2,6 +2,8 @@ import * as React from 'react';
 
 const OPEN_STATE = 1;
 
+type Callback = (params: CallbackParams) => React.ReactElement;
+
 interface Props { 
   onError: Function,
   onOpen: Function,
@@ -10,8 +12,13 @@ interface Props {
   url: string,
   retry: boolean,
   protocol?: string,
-  children: Function,
+  children: Callback,
 };
+
+interface CallbackParams {
+  send: Function,
+  close: Function,
+}
 
 export default class Websocket extends React.PureComponent<Props, {}> {
   client: WebSocket | undefined;
